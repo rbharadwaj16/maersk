@@ -1,0 +1,31 @@
+parameters:
+- name: buildConfig
+  default: 'Release'
+
+
+steps:
+
+- task: DotNetCoreCLI@2
+  displayName: NuGet restore to have all necessary dependencies
+  inputs:
+     command: restore
+     projects: '**/*.csproj'
+     workingDirectory: $(Build.SourcesDirectory)
+
+
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+     command: 'build'
+     projects: |
+        $(Build.SourcesDirectory)/webapp
+        $(Build.SourcesDirectory)/webapi
+        $(Build.SourcesDirectory)/test
+     arguements: '--configuration ${{ parameters.buildConfig }}'
+
+
+
+    
+        
+
+        

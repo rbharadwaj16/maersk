@@ -1,0 +1,6 @@
+variables:
+  - name: prod-webapp-sc
+    value: prod-webapp-sc
+
+  - name: prod-appservice-sc
+    value: prod-appservice-sc

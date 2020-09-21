@@ -1,0 +1,55 @@
+---
+trigger:
+   branches:
+     include:
+      - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Dev
+  displayName: Dev
+  variables:
+    - template: /variables/variables.dev.yml
+  jobs:
+   - job: Deploy WebAPP
+     steps:
+       - template: /templates/webApp_deploy_template.yml
+   - job: Deploy WebAPI
+     steps:
+       - template: /templates/webapi_deploy_template.yml
+
+
+- stage: QA
+  displayName: QA
+  environment: 'QA' #Calling approval
+  variables:
+    - template: /variables/variables.qa.yml
+  jobs:
+   - job: Deploy WebAPP
+     steps:
+       - template: /templates/webApp_deploy_template.yml
+   - job: Deploy WebAPI
+     steps:
+       - template: /templates/webapi_deploy_template.yml
+       
+
+- stage: Prod
+  displayName: Prod
+  environment: 'Prod' #Calling approval
+  variables:
+    - template: /variables/variables.prod.yml
+  jobs:
+   - job: Deploy WebAPP
+     steps:
+       - template: /templates/webApp_deploy_template.yml
+   - job: Deploy WebAPI
+     steps:
+       - template: /templates/webapi_deploy_template.yml
+   
+   
+   
+     
+
+

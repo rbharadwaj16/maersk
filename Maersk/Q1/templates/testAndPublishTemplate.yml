@@ -1,0 +1,23 @@
+ parameters:
+- name: buildConfig
+  default: 'Release'
+
+
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest')) 
+    command: test
+    projects: '**/test/*.csproj'
+
+- task: PublishPipelinArtifact@1
+  displayName: Publish WebApp
+  inputs: 
+    targetPath: $(System.DefaultWorkingDirectory)/WebApp
+    artifactName: WebApp
+
+- task: PublishPipelinArtifact@1
+  displayName: Publish WebAPI
+  inputs: 
+    targetPath: $(System.DefaultWorkingDirectory)/WebAPI
+    artifactName: WebAPI

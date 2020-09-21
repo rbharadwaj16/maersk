@@ -1,0 +1,70 @@
+---
+trigger:
+ branches:
+  include:
+   - master
+
+variables:
+ azureContainerReigstry: myrepo.azurecr.io
+ acsServiceConnection: acs-sv
+ aksServiceConnection: aks-sv
+ image_name: webapi 
+ kube_deploy_file: $(System.DefaultWorkingDirectory)/deployment.yml
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+
+- stage: build
+  displayName: builAndPushdImage
+  jobs:
+  - job: buildAndPushImage
+    displayName: builAndPushdImage
+    steps:
+    - task: Docker@2
+      inputs:
+      command: build
+      containerRegistry: $(acsServiceConnection)
+      repository: $(image_name)
+      tags: |
+       $(image_name):$(Build.BuildId)
+
+
+- stage: deploy
+  displayName: deploy
+  dependsOn: buildAndPushImage
+  jobs:
+  - job: deploy
+    displayName: deploying the app
+    steps:
+    - bash: |
+        echo "apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+           name: $(image_name)
+        spec:
+          replicas: 5
+          selector:
+            matchLables:
+              app: $(image_name):$(Build.BuildId)
+            template:
+              metadata:
+               labels:
+                 app: $(image_name):$(Build.BuildId)
+              spec:
+                containers:
+                - name: $(image_name)
+                  image: $azureContainerReigstry/$(image_name):$(Build.BuildId)" > $kube_deploy_file
+    - task: Kubernetes@1
+      displayName: applying the deployment
+      inputs:
+        connectionType: Kubernetes Service Connection
+        kubernetesServiceEndpoint: $aksServiceConnection
+        command: apply
+        arguements: -f $kube_deploy_file
+
+                 
+
+
+

@@ -1,0 +1,23 @@
+---
+trigger:
+   branches:
+     include:
+      - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+
+jobs:
+  - job: BuildStage
+    steps:
+    - template: /templates/buildTemplate.yml
+
+  - job: testAndPublishStage
+    dependsOn: BuildStage
+    condition: succeeded()
+    steps:
+    - template: /templates/testAndPublishTemplate.yml

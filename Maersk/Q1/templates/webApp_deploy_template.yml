@@ -1,0 +1,6 @@
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: ${{ variables.service_connection }}
+    appName: 'WebAPP'
+    package: $(Build.SourcesDirectory)/webapp 

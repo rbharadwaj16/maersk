@@ -1,0 +1,6 @@
+variables:
+  - name: dev-webapp-sc
+    value: dev-webapp-sc
+
+  - name: dev-appservice-sc
+    value: dev-appservice-sc

@@ -1,0 +1,6 @@
+variables:
+  - name: qa-webapp-sc
+    value: qa-webapp-sc
+
+  - name: qa-appservice-sc
+    value: qa-appservice-sc
